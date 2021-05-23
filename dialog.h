@@ -5,6 +5,7 @@
 #include <Qca-qt5/QtCrypto/QtCrypto>
 #include <QErrorMessage>
 #include <QDebug>
+#include <QInputDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Dialog; }
@@ -17,6 +18,12 @@ class Dialog : public QDialog
 public:
     Dialog(QWidget *parent = nullptr);
     ~Dialog();
+    enum actionType{
+        ENCRYPT,
+        DECRYPT,
+        SIGN,
+        CHECKSIGN
+    };
 
 private slots:
     void on_encryptRadio_toggled(bool checked);
@@ -29,10 +36,14 @@ private slots:
 
     void on_lockKeysButton_clicked();
 
+    void on_signRadio_toggled(bool checked);
+
+    void on_checkSignRadio_toggled(bool checked);
+
 private:
     Ui::Dialog *ui;
     bool keysAccepted;
-    bool encrypt;
+    actionType radioAction;
     QCA::PrivateKey privateKey;
     QCA::PublicKey publicKey;
     QErrorMessage *error;

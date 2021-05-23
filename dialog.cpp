@@ -19,16 +19,26 @@ Dialog::~Dialog()
 
 
 void Dialog::on_encryptRadio_toggled(bool checked){
-    encrypt = true;
+    radioAction = actionType::ENCRYPT;
     Q_UNUSED(checked);
 }
 
 
 void Dialog::on_decryptRadio_toggled(bool checked){
-    encrypt = false;
+    radioAction = actionType::DECRYPT;
     Q_UNUSED(checked);
 }
 
+void Dialog::on_signRadio_toggled(bool checked){
+    radioAction = actionType::SIGN;
+    Q_UNUSED(checked);
+}
+
+
+void Dialog::on_checkSignRadio_toggled(bool checked){
+    radioAction = actionType::CHECKSIGN;
+    Q_UNUSED(checked);
+}
 
 void Dialog::on_genKeysButton_clicked(){
     privateKey = QCA::KeyGenerator().createRSA(2048);
@@ -46,22 +56,42 @@ void Dialog::on_genKeysButton_clicked(){
 void Dialog::on_proceedButton_clicked(){
     if(!keysAccepted){
         error->showMessage("You havent provided keys!\nGenerate keys or insert your own keys to continue!");
-    }else{
+    }else if(!ui->inputText->toPlainText().isEmpty()){
         QCA::SecureArray result;
-        if(encrypt){
-            if(!ui->inputText->toPlainText().isEmpty()){
-                result = publicKey.encrypt(ui->inputText->toPlainText().toLocal8Bit(), QCA::EME_PKCS1_OAEP);
-                if(!result.isEmpty()){
-                    ui->outputText->setPlainText(QCA::arrayToHex(result.toByteArray()));
-                }else{
-                    error->showMessage("Failed to encrypt");
-                }
+        switch (radioAction) {
+        case Dialog::ENCRYPT:{
+            result = publicKey.encrypt(ui->inputText->toPlainText().toLocal8Bit(), QCA::EME_PKCS1_OAEP);
+            if(!result.isEmpty()){
+                ui->outputText->setPlainText(QCA::arrayToHex(result.toByteArray()));
+            }else{
+                error->showMessage("Failed to encrypt");
             }
-        }else{
+            break;
+        }
+        case Dialog::DECRYPT:{
             if(!privateKey.decrypt(QCA::hexToArray(ui->inputText->toPlainText().toLocal8Bit()), &result, QCA::EME_PKCS1_OAEP))
                 error->showMessage("Failed to decrypt");
             ui->outputText->setPlainText(result.toByteArray());
+            break;
         }
+        case Dialog::SIGN:{
+            QCA::SecureArray input = ui->inputText->toPlainText().toLocal8Bit();
+            ui->outputText->setPlainText(QCA::arrayToHex(privateKey.signMessage(input, QCA::EMSA1_SHA1)));
+            break;
+        }
+        case Dialog::CHECKSIGN:{
+            QString origMsg = QInputDialog::getText(this, "Msg asker", "Please input original Message");
+            if(publicKey.verifyMessage(origMsg.toLocal8Bit(), QCA::hexToArray(ui->inputText->toPlainText().toLocal8Bit()), QCA::EMSA1_SHA1)){
+                ui->outputText->setPlainText("Signature is VALID!");
+            }else{
+                ui->outputText->setPlainText("Signature is INVALID!");
+            }
+            break;
+        }
+
+        }
+    }else{
+        error->showMessage("Input is empty!");
     }
 }
 
