@@ -36,9 +36,7 @@ private slots:
     void on_signRadio_toggled(bool checked);
     void on_checkSignRadio_toggled(bool checked);
     void on_copyOutputButton_clicked();
-
     void on_exportKeysButton_clicked();
-
     void on_outputText_textChanged();
 
 private:

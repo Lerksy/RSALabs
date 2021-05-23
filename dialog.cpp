@@ -5,6 +5,8 @@ Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
 {
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    this->setFixedSize(851, 423);
     ui->setupUi(this);
     ui->outputText->setReadOnly(true);
     ui->encryptRadio->setChecked(true);
