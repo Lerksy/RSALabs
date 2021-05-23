@@ -6,6 +6,8 @@
 #include <QErrorMessage>
 #include <QDebug>
 #include <QInputDialog>
+#include <QFileDialog>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Dialog; }
@@ -27,18 +29,17 @@ public:
 
 private slots:
     void on_encryptRadio_toggled(bool checked);
-
     void on_decryptRadio_toggled(bool checked);
-
     void on_genKeysButton_clicked();
-
     void on_proceedButton_clicked();
-
     void on_lockKeysButton_clicked();
-
     void on_signRadio_toggled(bool checked);
-
     void on_checkSignRadio_toggled(bool checked);
+    void on_copyOutputButton_clicked();
+
+    void on_exportKeysButton_clicked();
+
+    void on_outputText_textChanged();
 
 private:
     Ui::Dialog *ui;

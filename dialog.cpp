@@ -8,6 +8,8 @@ Dialog::Dialog(QWidget *parent)
     ui->setupUi(this);
     ui->outputText->setReadOnly(true);
     ui->encryptRadio->setChecked(true);
+    ui->exportKeysButton->hide();
+    ui->copyOutputButton->hide();
     keysAccepted = false;
     error = new QErrorMessage(this);
 }
@@ -50,6 +52,7 @@ void Dialog::on_genKeysButton_clicked(){
     ui->genKeysButton->setEnabled(false);
     ui->publicKeyText->setPlainText(publicKey.toPEM());
     ui->privateKeyText->setPlainText(privateKey.toPEM());
+    ui->exportKeysButton->show();
 }
 
 
@@ -108,6 +111,36 @@ void Dialog::on_lockKeysButton_clicked(){
         ui->genKeysButton->setEnabled(false);
     }else{
         error->showMessage("One of your keys is corrupted!");
+    }
+}
+
+
+void Dialog::on_copyOutputButton_clicked(){
+        ui->outputText->selectAll();
+        ui->outputText->copy();
+}
+
+
+void Dialog::on_exportKeysButton_clicked(){
+    QString path = QFileDialog::getExistingDirectory(this, "Choose directory to save Keys to!", QDir::currentPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    bool prKSaved, pubKSaved;
+    pubKSaved = publicKey.toPEMFile(path + "/publicKey.pem");
+    prKSaved = privateKey.toPEMFile(path + "/privateKey.pem");
+    if(prKSaved && pubKSaved){
+        QMessageBox::information(this, "Saved", "Both keys are successfully saved!");
+    }else if(!prKSaved && !pubKSaved){
+        error->showMessage("Both keys was unable to save!");
+    }else if(!prKSaved){
+        error->showMessage("Private key was unable to save!");
+    }else if(!pubKSaved){
+        error->showMessage("Public key was unable to save!");
+    }
+}
+
+
+void Dialog::on_outputText_textChanged(){
+    if(!ui->outputText->toPlainText().isEmpty()){
+        ui->copyOutputButton->show();
     }
 }
 
