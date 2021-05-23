@@ -51,7 +51,11 @@ void Dialog::on_proceedButton_clicked(){
         if(encrypt){
             if(!ui->inputText->toPlainText().isEmpty()){
                 result = publicKey.encrypt(ui->inputText->toPlainText().toLocal8Bit(), QCA::EME_PKCS1_OAEP);
-                ui->outputText->setPlainText(QCA::arrayToHex(result.toByteArray()));
+                if(!result.isEmpty()){
+                    ui->outputText->setPlainText(QCA::arrayToHex(result.toByteArray()));
+                }else{
+                    error->showMessage("Failed to encrypt");
+                }
             }
         }else{
             if(!privateKey.decrypt(QCA::hexToArray(ui->inputText->toPlainText().toLocal8Bit()), &result, QCA::EME_PKCS1_OAEP))
@@ -64,8 +68,8 @@ void Dialog::on_proceedButton_clicked(){
 
 void Dialog::on_lockKeysButton_clicked(){
     QCA::ConvertResult privateResult, publicResult;
-    privateKey.fromPEM(ui->privateKeyText->toPlainText(), QCA::SecureArray(), &privateResult);
-    publicKey.fromPEM(ui->publicKeyText->toPlainText(), &publicResult);
+    privateKey = QCA::PrivateKey::fromPEM(ui->privateKeyText->toPlainText(), QCA::SecureArray(), &privateResult);
+    publicKey = QCA::PublicKey::fromPEM(ui->publicKeyText->toPlainText(), &publicResult);
     if(privateResult == QCA::ConvertGood && publicResult == QCA::ConvertGood){
         ui->publicKeyText->setReadOnly(true);
         ui->privateKeyText->setReadOnly(true);
