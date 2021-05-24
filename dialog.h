@@ -8,6 +8,7 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "des.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Dialog; }
@@ -39,6 +40,8 @@ private slots:
     void on_exportKeysButton_clicked();
     void on_outputText_textChanged();
 
+    void on_desButton_clicked();
+
 private:
     Ui::Dialog *ui;
     bool keysAccepted;
@@ -46,5 +49,6 @@ private:
     QCA::PrivateKey privateKey;
     QCA::PublicKey publicKey;
     QErrorMessage *error;
+    DES *desWindow;
 };
 #endif // DIALOG_H

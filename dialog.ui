@@ -242,6 +242,19 @@
     <string>Copy output to Clipboard</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="desButton">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>10</y>
+     <width>80</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DES</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -14,6 +14,7 @@ Dialog::Dialog(QWidget *parent)
     ui->copyOutputButton->hide();
     keysAccepted = false;
     error = new QErrorMessage(this);
+    desWindow = new DES(this);
 }
 
 Dialog::~Dialog()
@@ -144,5 +145,12 @@ void Dialog::on_outputText_textChanged(){
     if(!ui->outputText->toPlainText().isEmpty()){
         ui->copyOutputButton->show();
     }
+}
+
+
+void Dialog::on_desButton_clicked()
+{
+
+    desWindow->show();
 }
 
